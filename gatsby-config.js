@@ -10,7 +10,7 @@ module.exports = {
     {
       resolve: `gatsby-source-wordpress`,
       options: {
-        url: `https://yoursite.com/graphql`,
+        url: `https://zyncagency.wpengine.com/graphql`,
       },
     }
   ],
