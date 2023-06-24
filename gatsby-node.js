@@ -68,9 +68,9 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
     )
   )
 
-  const createIndividualPagePages = async ({ pages, gatsbyUtilities }) => {}
-/*  Promise.all(
-      pages.map(( page ) =>
+  const createIndividualPagePages = async ({ pages, gatsbyUtilities }) => 
+  Promise.all(
+      pages.map(( { page } ) =>
         // createPage is an action passed to createPages
         // See https://www.gatsbyjs.com/docs/actions#createPage for more info
         gatsbyUtilities.actions.createPage({
@@ -91,7 +91,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
           },
         })
       )
-  )*/
+  )
 
 
 
