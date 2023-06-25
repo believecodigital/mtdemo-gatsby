@@ -11,29 +11,25 @@ import parse from "html-react-parser"
 import "../css/@wordpress/block-library/build-style/style.css"
 import "../css/@wordpress/block-library/build-style/theme.css"
 
-import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
-const PageTemplate = ({ data: { page } }) => {
+const PersonTemplate = ({ data: { person } }) => {
   const featuredImage = {
-    data: page.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
-    alt: page.featuredImage?.node?.alt || ``,
   }
+  console.log('XXX' + person);
 
   return (
     <Layout>
-      <Seo title={page.title} description={page.excerpt} />
+      <Seo title={person.title} description={person.excerpt} />
 
       <article
-        className="page"
+        className="person"
         itemScope
-        itemType="http://schema.org/Article"
+        itemType="http://schema.org/Person"
       >
         <header>
-          <h1 itemProp="headline">{parse(page.title)}</h1>
-
-          <p>{page.date}</p>
+          <h1 itemProp="headline">{parse(person.title)}</h1>
 
           {/* if we have a featured image for this page let's display it */}
           {featuredImage?.data && (
@@ -45,32 +41,29 @@ const PageTemplate = ({ data: { page } }) => {
           )}
         </header>
 
-        {!!page.content && (
-          <section itemProp="articleBody">{parse(page.content)}</section>
+        {!!person.content && (
+          <section itemProp="articleBody">{parse(person.content)}</section>
         )}
 
         <hr />
 
-        <footer>
-          <Bio />
-        </footer>
       </article>
 
     </Layout>
   )
 }
 
-export default PageTemplate
+export default PersonTemplate
 
 export const pageQuery = graphql`
-  query PageById(
+  query PersonById(
     $id: String!
   ) {
-    page: wpPage(id: { eq: $id }) {
+    person: wpPerson(id: { eq: $id }) {
       id
+      uri
       content
       title
-      date(formatString: "MMMM DD, YYYY")
       featuredImage {
         node {
           altText

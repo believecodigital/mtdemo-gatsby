@@ -1,9 +1,9 @@
-const path = require(`path`)
-const chunk = require(`lodash/chunk`)
+const path = require('path')
+const chunk = require('lodash/chunk')
 
 // This is a simple debugging tool
 // dd() will prettily dump to the terminal and kill the process
-// const { dd } = require(`dumper.js`)
+// const { dd } = require('dumper.js')
 
 /**
  * exports.createPages is a built-in Gatsby Node API.
@@ -15,6 +15,12 @@ exports.createPages = async gatsbyUtilities => {
   // Query our posts from the GraphQL server
   const posts = await getPosts(gatsbyUtilities)
   const pages = await getPages(gatsbyUtilities)
+  const people = await getPeople(gatsbyUtilities)
+
+  console.log(posts);
+  console.log(pages);
+  console.log(people);
+  //return;
 
   // If there are no posts in WordPress, don't do anything
   if (!posts.length) {
@@ -34,6 +40,13 @@ exports.createPages = async gatsbyUtilities => {
   // If there are pages, create pages for them
   await createIndividualPagePages({ pages, gatsbyUtilities })
 
+  if (!people.length) {
+    return
+  }
+
+  // If there are people, create pages for them
+  await createIndividualPeoplePages({ people, gatsbyUtilities })
+
 }
 
 /**
@@ -50,9 +63,9 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
         path: post.uri,
 
         // use the blog post template as the page component
-        component: path.resolve(`./src/templates/blog-post.js`),
+        component: path.resolve('./src/templates/blog-post.js'),
 
-        // `context` is available in the template as a prop and
+        // 'context' is available in the template as a prop and
         // as a variable in GraphQL.
         context: {
           // we need to add the post id here
@@ -79,9 +92,9 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
           path: page.uri,
 
           // use the blog post template as the page component
-          component: path.resolve(`./src/templates/page.js`),
+          component: path.resolve('./src/templates/page.js'),
 
-          // `context` is available in the template as a prop and
+          // 'context' is available in the template as a prop and
           // as a variable in GraphQL.
           context: {
             // we need to add the post id here
@@ -93,6 +106,30 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
       )
   )
 
+  const createIndividualPeoplePages = async ({ people, gatsbyUtilities }) => 
+  Promise.all(
+      people.map(( { person } ) => 
+        // createPage is an action passed to createPages
+        // See https://www.gatsbyjs.com/docs/actions#createPage for more info
+        gatsbyUtilities.actions.createPage({
+          // Use the WordPress uri as the Gatsby page path
+          // This is a good idea so that internal links and menus work 👍
+          path: person.uri,
+
+          // use the person template as the page component
+          component: path.resolve('./src/templates/person.js'),
+
+          // 'context' is available in the template as a prop and
+          // as a variable in GraphQL.
+          context: {
+            // we need to add the post id here
+            // so our person template knows which person
+            // the current person is (when you open it in a browser)
+            id: person.id,
+          },
+        })
+      )
+  )
 
 
 /**
@@ -124,7 +161,7 @@ async function createBlogPostArchive({ posts, gatsbyUtilities }) {
           // we want the first page to be "/" and any additional pages
           // to be numbered.
           // "/blog/2" for example
-          return page === 1 ? `/` : `/blog/${page}`
+          return page === 1 ? '/' : '/blog/${page}'
         }
 
         return null
@@ -136,9 +173,9 @@ async function createBlogPostArchive({ posts, gatsbyUtilities }) {
         path: getPagePath(pageNumber),
 
         // use the blog post archive template as the page component
-        component: path.resolve(`./src/templates/blog-post-archive.js`),
+        component: path.resolve('./src/templates/blog-post-archive.js'),
 
-        // `context` is available in the template as a prop and
+        // 'context' is available in the template as a prop and
         // as a variable in GraphQL.
         context: {
           // the index of our loop is the offset of which posts we want to display
@@ -192,7 +229,7 @@ async function getPosts({ graphql, reporter }) {
 
   if (graphqlResult.errors) {
     reporter.panicOnBuild(
-      `There was an error loading your blog posts`,
+      'There was an error loading your blog posts',
       graphqlResult.errors
     )
     return
@@ -220,11 +257,39 @@ async function getPages({ graphql, reporter }) {
 
   if (graphqlResult.errors) {
     reporter.panicOnBuild(
-      `There was an error loading your pages`,
+      'There was an error loading your pages',
       graphqlResult.errors
     )
     return
   }
 
   return graphqlResult.data.allWpPage.edges
+}
+
+async function getPeople({ graphql, reporter }) {
+  const graphqlResult = await graphql(/* GraphQL */ `
+    query WpPages {
+      # Query all WordPress blog posts sorted by date
+      allWpPerson {
+        edges {
+          # note: this is a GraphQL alias. It renames "node" to "person" for this query
+          # We're doing this because this "node" is a person! It makes our code more readable further down the line.
+          person: node {
+            id
+            uri
+          }
+        }
+      }
+    }
+  `)
+
+  if (graphqlResult.errors) {
+    reporter.panicOnBuild(
+      'There was an error loading your pages',
+      graphqlResult.errors
+    )
+    return
+  }
+
+  return graphqlResult.data.allWpPerson.edges
 }
