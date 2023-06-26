@@ -16,8 +16,9 @@ import Seo from "../components/seo"
 
 const PersonTemplate = ({ data: { person } }) => {
   const featuredImage = {
+    data: person.featuredImage?.node?.localFile?.childImageSharp?.gatsbyImageData,
+    alt: person.featuredImage?.node?.alt || ``,
   }
-  console.log('XXX' + person);
 
   return (
     <Layout>
