@@ -60,7 +60,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
       gatsbyUtilities.actions.createPage({
         // Use the WordPress uri as the Gatsby page path
         // This is a good idea so that internal links and menus work 👍
-        path: post.uri,
+        path: post.languageCode + '/' + post.uri,
 
         // use the blog post template as the page component
         component: path.resolve('./src/templates/blog-post.js'),
@@ -89,7 +89,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
         gatsbyUtilities.actions.createPage({
           // Use the WordPress uri as the Gatsby page path
           // This is a good idea so that internal links and menus work 👍
-          path: page.uri,
+          path: page.languageCode + '/' + page.uri,
 
           // use the blog post template as the page component
           component: path.resolve('./src/templates/page.js'),
@@ -114,7 +114,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
         gatsbyUtilities.actions.createPage({
           // Use the WordPress uri as the Gatsby page path
           // This is a good idea so that internal links and menus work 👍
-          path: person.uri,
+          path: person.languageCode + '/' + person.uri,
 
           // use the person template as the page component
           component: path.resolve('./src/templates/person.js'),
@@ -215,6 +215,7 @@ async function getPosts({ graphql, reporter }) {
           # note: this is a GraphQL alias. It renames "node" to "post" for this query
           # We're doing this because this "node" is a post! It makes our code more readable further down the line.
           post: node {
+            languageCode
             id
             uri
           }
@@ -247,6 +248,7 @@ async function getPages({ graphql, reporter }) {
           # note: this is a GraphQL alias. It renames "node" to "page" for this query
           # We're doing this because this "node" is a page! It makes our code more readable further down the line.
           page: node {
+            languageCode
             id
             uri
           }
@@ -275,6 +277,7 @@ async function getPeople({ graphql, reporter }) {
           # note: this is a GraphQL alias. It renames "node" to "person" for this query
           # We're doing this because this "node" is a person! It makes our code more readable further down the line.
           person: node {
+            languageCode
             id
             uri
           }
