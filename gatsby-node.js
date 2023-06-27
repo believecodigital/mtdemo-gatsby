@@ -17,11 +17,6 @@ exports.createPages = async gatsbyUtilities => {
   const pages = await getPages(gatsbyUtilities)
   const people = await getPeople(gatsbyUtilities)
 
-  console.log(posts);
-  console.log(pages);
-  console.log(people);
-  //return;
-
   // If there are no posts in WordPress, don't do anything
   if (!posts.length) {
     return
@@ -31,7 +26,7 @@ exports.createPages = async gatsbyUtilities => {
   await createIndividualBlogPostPages({ posts, gatsbyUtilities })
 
   // And a paginated archive
-  await createBlogPostArchive({ posts, gatsbyUtilities })
+  //await createBlogPostArchive({ posts, gatsbyUtilities })
 
   if (!pages.length) {
     return
@@ -89,7 +84,7 @@ const createIndividualBlogPostPages = async ({ posts, gatsbyUtilities }) =>
         gatsbyUtilities.actions.createPage({
           // Use the WordPress uri as the Gatsby page path
           // This is a good idea so that internal links and menus work 👍
-          path: page.languageCode + '/' + page.uri,
+          path: (page.uri === "/" ? page.uri : page.languageCode + '/' + page.uri),
 
           // use the blog post template as the page component
           component: path.resolve('./src/templates/page.js'),

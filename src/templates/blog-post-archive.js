@@ -29,8 +29,6 @@ const BlogIndex = ({
     <Layout isHomePage>
       <Seo title="All posts" />
 
-      <Bio />
-
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
           const title = post.title
@@ -44,7 +42,7 @@ const BlogIndex = ({
               >
                 <header>
                   <h2>
-                    <Link to={post.uri} itemProp="url">
+                    <Link to={post.language + post.uri} itemProp="url">
                       <span itemProp="headline">{parse(title)}</span>
                     </Link>
                   </h2>
